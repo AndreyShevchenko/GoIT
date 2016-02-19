@@ -1,45 +1,53 @@
 public class SquareFigures {
 
-    private static void checkNegativeValue(double number) {
-        if (number <= 0) {
+    private static void checkValue(double number) {
+        if (number <= 0 || number > Double.MAX_VALUE) {
             throw new IllegalArgumentException();
+        }
+    }
+
+    static double checkNumberEqualsFinite(double number) {
+        if (Double.isFinite(number)) {
+            return number;
+        } else {
+            return Double.NaN;
         }
     }
 
     // площадь треугольника
     public static double getSquare(double sideA, double sideB, double sideC) {
         try {
-            checkNegativeValue(sideA);
-            checkNegativeValue(sideB);
-            checkNegativeValue(sideC);
-            double perimeter = (sideA + sideB + sideC) / 2;
-            return Math.sqrt(perimeter * (perimeter - sideA) * (perimeter - sideB) * (perimeter - sideC));
+            checkValue(sideA);
+            checkValue(sideB);
+            checkValue(sideC);
+            double perimeter = checkNumberEqualsFinite((sideA + sideB + sideC) / 2);
+            return checkNumberEqualsFinite(Math.sqrt(perimeter * (perimeter - sideA) * (perimeter - sideB) * (perimeter - sideC)));
         } catch (IllegalArgumentException ex) {
-            System.out.println("Length of side must be positive");
+            System.out.println("It's wrong value was entered");
         }
-        return -1;
+        return Double.NaN;
     }
 
     // площадь прямоугольника
     public static double getSquare(double sideA, double sideB) {
         try {
-            checkNegativeValue(sideA);
-            checkNegativeValue(sideB);
-            return sideA * sideB;
+            checkValue(sideA);
+            checkValue(sideB);
+            return checkNumberEqualsFinite(sideA * sideB);
         } catch (IllegalArgumentException ex) {
-            System.out.println("Length of side must be positive");
+            System.out.println("It's wrong value was entered");
         }
-        return -1;
+        return Double.NaN;
     }
 
     // площадь круга
     public static double getSquare(double radius){
         try {
-            checkNegativeValue(radius);
-            return Math.PI * Math.pow(radius, 2);
+            checkValue(radius);
+            return checkNumberEqualsFinite(Math.PI * Math.pow(radius, 2));
         } catch (IllegalArgumentException ex) {
-            System.out.println("Length of radius must be positive");
+            System.out.println("It's wrong value was entered");
         }
-        return -1;
+        return Double.NaN;
     }
 }

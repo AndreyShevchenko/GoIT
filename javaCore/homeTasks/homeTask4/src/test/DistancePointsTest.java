@@ -28,8 +28,14 @@ public class DistancePointsTest {
 
     @Parameterized.Parameters
     public static Iterable<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 {0, 0, 1, 1, 1.4},
-                {-1, -1, 1, 1, 2.8}, });
+                {4, 3, -1, -1, 6.4},
+                {0, 0, 0, -1, 1},
+                {1E50, 1E50, 1E50, 4.330127018922194E99, 4.330127018922194E99},
+                {Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, -1, Double.NaN},
+                {Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE, 0, 0},
+                {Double.NaN, 100, 10, -1, Double.NaN}
+        });
     }
 }

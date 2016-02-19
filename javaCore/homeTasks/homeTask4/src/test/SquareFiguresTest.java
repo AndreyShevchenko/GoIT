@@ -32,24 +32,36 @@ public class SquareFiguresTest {
         return $(
                 $(3, 5, 8, 0),
                 $(4, 3, 2, 2.9),
-                $(4, 0, 2, -1),
-                $(3, 5, 9, 0)
+                $(4, 3, -1, Double.NaN),
+                $(0, 0, 0, Double.NaN),
+                $(1E50, 1E50, 1E50, 4.330127018922194E99),
+                $(Double.MAX_VALUE, Double.MAX_VALUE, Double.MAX_VALUE, Double.NaN),
+                $(Double.MIN_VALUE, Double.MIN_VALUE, Double.MIN_VALUE, 0),
+                $(Double.NaN, 100, 10, Double.NaN)
         );
     }
 
     public Object[] parametersForTestGetSquareRectangle() {
         return $(
                 $(3, 5, 15),
-                $(4, 3, 12),
-                $(-1, 3, -1)
+                $(4, -1, Double.NaN),
+                $(0, 0, Double.NaN),
+                $(1E50, 1E50, 1.0000000000000002E100),
+                $(Double.MAX_VALUE, Double.MAX_VALUE, Double.NaN),
+                $(Double.MIN_VALUE, Double.MIN_VALUE, 0),
+                $(Double.NaN, 100, Double.NaN)
         );
     }
 
     public Object[] parametersForTestGetSquareCircle() {
         return $(
                 $(3, 28.3),
-                $(4, 50.3),
-                $(-2, -1)
+                $(157.682, 78111.3),
+                $(0, Double.NaN),
+                $(1E50, 3.141592653589794E100),
+                $(Double.MAX_VALUE, Double.NaN),
+                $(Double.MIN_VALUE, 0),
+                $(Double.NaN, Double.NaN)
         );
     }
 
