@@ -19,6 +19,8 @@ public class FindElement {
         }
         catch (IllegalArgumentException value){
             System.out.println("[Error: incorrect variable]; correct values are MIN or MAX");
+            return ((int) Double.NaN);
+
         }
         return element;
     }

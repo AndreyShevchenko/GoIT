@@ -16,57 +16,24 @@ public class BinaryHeap {
         heap[i] = heap[j] - heap[i];
     }
 
-    private void liftElementToCorrectPosition(int i, String liftMethod) {
+    private int liftMaxElementToTop(int i) {
         int leftNode = 2 * i;
         int rightNode = 2 * i + 1;
-        int minValue = i;
         int maxValue = i;
         if (leftNode <= currentSize) {
-            if (heap[leftNode - 1] < heap[i - 1]) {
-                minValue = leftNode;
-            } else {
+            if (heap[i - 1] < heap[leftNode - 1]) {
                 maxValue = leftNode;
             }
         }
         if (rightNode <= currentSize) {
-            if (heap[rightNode - 1] < heap[minValue - 1]) {
-                minValue = rightNode;
-            } else {
-                if (heap[rightNode - 1] > heap[maxValue - 1]) {
-                    maxValue = rightNode;
-                }
+            if (heap[maxValue - 1] < heap[rightNode - 1]) {
+                maxValue = rightNode;
             }
         }
-        switch (liftMethod) {
-            case "max":
-                if (maxValue != i) {
-                    swapTwoElements(maxValue - 1, i - 1);
-                    if (minValue == i) {
-                        minValue = maxValue;
-                    }
-                }
-                if (minValue != leftNode && leftNode <= currentSize) {
-                    swapTwoElements(minValue - 1, leftNode - 1);
-                }
-                break;
-            case "average":
-                if (minValue != leftNode && leftNode <= currentSize) {
-                    swapTwoElements(minValue - 1, leftNode - 1);
-                    if (maxValue == leftNode) {
-                        maxValue = minValue;
-                    }
-                }
-                if (maxValue != rightNode && rightNode <= currentSize) {
-                    swapTwoElements(maxValue - 1, rightNode - 1);
-                }
-                break;
+        if (maxValue != i) {
+            swapTwoElements(maxValue - 1, i - 1);
         }
-    }
-
-    private boolean isNodeFromRightBranch(int nodeNumber) {
-        double temp = Math.log(nodeNumber + 1) / Math.log(2);
-        int tempRounding = (int) temp;
-        return (tempRounding - temp == 0);
+        return maxValue;
     }
 
     private void makeBiggerHeap() {
@@ -76,7 +43,6 @@ public class BinaryHeap {
     }
 
     public void insert(int val) {
-        String liftMethod;
         if (currentSize >= heap.length) {
             makeBiggerHeap();
         }
@@ -84,43 +50,28 @@ public class BinaryHeap {
         currentSize++;
         if (currentSize > 1) {
             for (int i = currentSize / 2; i >= 1; i /= 2) {
-                if (i == 1 || isNodeFromRightBranch(i)) {
-                    liftMethod = "average";
-                } else {
-                    liftMethod = "max";
-                }
-                liftElementToCorrectPosition(i, liftMethod);
+                liftMaxElementToTop(i);
             }
         }
     }
 
     public int poll() {
-        int nodeNumber = 3;
-        int result = heap[0];
-        while (nodeNumber <= currentSize) {
-            if (result < heap[nodeNumber - 1]) {
-                result = heap[nodeNumber - 1];
+        int maxNode;
+        int root = heap[0];
+        heap[0] = heap[currentSize - 1];
+        currentSize--;
+        if (currentSize > 1) {
+            int i = 1;
+            while (i < currentSize) {
+                maxNode = liftMaxElementToTop(i);
+                if (i == maxNode) {
+                    i = currentSize;
+                } else {
+                    i = maxNode;
+                }
             }
-            nodeNumber = nodeNumber * 2 + 1;
         }
-        return result;
+        return root;
     }
 
-    public void printTree() {
-        int i = 1;
-        int index = (1 << i) - 1;
-        int begin = 1;
-        do {
-            for (int j = begin; j <= index; j++) {
-                System.out.print(heap[j - 1] + " ");
-            }
-            System.out.println();
-            i++;
-            begin = index + 1;
-            index = (1 << i) - 1;
-        } while (currentSize > index);
-        for (int j = (1 << (i - 1)); j <= currentSize; j++) {
-            System.out.print(heap[j - 1] + " ");
-        }
-    }
 }
