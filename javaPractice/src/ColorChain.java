@@ -16,25 +16,14 @@ public class ColorChain {
     }
 
     public int count(int N) {
-        int white;
-        int yellow;
-        int red;
-        if (values.containsKey(N - 3)) {
-            white = values.get(N - 3);
-        } else {
-            white = count(N - 3);
+        int result = 0;
+        for (int i = 1; i < 4; i++) {
+            if (values.containsKey(N - i)) {
+                result += values.get(N - i);
+            } else {
+                result += count(N - i);
+            }
         }
-        if (values.containsKey(N - 2)) {
-            yellow = values.get(N - 2);
-        } else {
-            yellow = count(N - 2);
-        }
-        if (values.containsKey(N - 1)) {
-            red = values.get(N - 1);
-        } else {
-            red = count(N - 1);
-        }
-        int result = white + yellow + red;
         if (!values.containsKey(N)) {
             values.put(N, result);
         }
