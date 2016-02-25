@@ -14,6 +14,7 @@ public class Doubles2 {
                 result += getDecimal(s, sign);
             }
             if (isExp(s.charAt(iterator))) {
+                if (result == 0) return null;
                 iterator++;
                 sign = getSign(s);
                 result *= Math.pow(10, getInteger(s, sign));

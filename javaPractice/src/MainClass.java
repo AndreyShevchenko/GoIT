@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -5,17 +7,16 @@ import java.util.Random;
  */
 public class MainClass {
     public static void main(String[] args) {
-        int size = 2;
-        BinaryHeap a = new BinaryHeap(size);
-        Random random = new Random();
-        int[] x = {0, 1, 2};
-        for (int i = 0; i < x.length; i++) {
-            a.insert(x[i]);
-        }
-        a.printTree();
-        System.out.println();
-        System.out.println(a.poll());
-
+        /*long lBegin = System.currentTimeMillis();
+        Doubles3 a = new Doubles3();
+        System.out.println(a.tryParse("e10"));
+        long lEnd = System.currentTimeMillis();
+        System.out.println(lEnd - lBegin);*/
+        int[] b = {-2147483648, -1, 2, 2147483647};
+        BinarySearch a = new BinarySearch();
+        System.out.println(a.find(b, -2147483648));
+        Integer d = -2147483648;
+        System.out.println(Integer.MIN_VALUE);
 
     }
 }
