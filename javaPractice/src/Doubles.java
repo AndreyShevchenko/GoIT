@@ -1,6 +1,6 @@
 public class Doubles {
 
-    public static Double tryParse(String s) {
+    public Double tryParse(String s) {
         if (s == null || s.length() == 0) return null;
         State status = State.INIT;
         int i = 0;
