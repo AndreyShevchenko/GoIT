@@ -3,29 +3,26 @@ public class Doubles2 {
 
     public Double tryParse(String s) {
         int sign;
-        int signExp = 1;
-        StringBuilder integ = new StringBuilder();
-        StringBuilder decim = new StringBuilder();
-        StringBuilder exp = new StringBuilder();
+        double result = 0;
         s = s.concat("\n");
         sign = getSign(s);
         while (iterator < s.length()) {
+            result += getInteger(s, sign);
             if (isPoint(s.charAt(iterator))) {
                 iterator++;
-                if (integ.length() == 0 && !isDigit(s.charAt(iterator))) return null;
-                getNumber(s, decim);
+                if (result == 0 && !isDigit(s.charAt(iterator))) return null;
+                result += getDecimal(s, sign);
             }
             if (isExp(s.charAt(iterator))) {
                 iterator++;
-                signExp = getSign(s);
-                getNumber(s, exp);
+                sign = getSign(s);
+                result *= Math.pow(10, getInteger(s, sign));
             }
-            getNumber(s, integ);
             if (s.charAt(iterator) == '\n') {
                 iterator = s.length();
             }
         }
-        return (getInteger(sign, integ) + getDecimal(sign, decim)) * Math.pow(10, getInteger(signExp, exp));
+        return result;
     }
 
     private int getSign(String s) {
@@ -38,27 +35,21 @@ public class Doubles2 {
         return 1;
     }
 
-    private StringBuilder getNumber(String s, StringBuilder str) {
-        while (isDigit(s.charAt(iterator))) {
-            str.append(s.charAt(iterator));
-            iterator++;
-        }
-        return str;
-    }
-
-    private double getInteger(int sign, StringBuilder s) {
+    private double getInteger(String s, int sign) {
         int result = 0;
-        for (int i = 0; i < s.length(); i++) {
-            result = result * 10 + Character.digit(s.charAt(i), 10);
+        while (isDigit(s.charAt(iterator))) {
+            result = result * 10 + Character.digit(s.charAt(iterator), 10);
+            iterator++;
         }
         return result * sign;
     }
 
-    private double getDecimal(int sign, StringBuilder s) {
+    private double getDecimal(String s, int sign) {
         double result = 0;
         int degree = -1;
-        for (int i = 0; i < s.length(); i++) {
-            result += Math.pow(10, degree) * Character.digit(s.charAt(i), 10);
+        while (isDigit(s.charAt(iterator))) {
+            result += Math.pow(10, degree) * Character.digit(s.charAt(iterator), 10);
+            iterator++;
             degree--;
         }
         return result * sign;
