@@ -5,9 +5,9 @@ public class FindElement {
         MAX
     }
 
-    public static int getElement(int[] arrayOfInteger, String typeOfElement){
-        int element = arrayOfInteger[0];
+    public static int getElement(int[] arrayOfInteger, String typeOfElement) {
         try {
+            int element = arrayOfInteger[0];
             Values value = Values.valueOf(typeOfElement);
             for (int i = 1; i < arrayOfInteger.length; i++) {
                 if ((value == Values.MIN && arrayOfInteger[i] < element) ||
@@ -16,13 +16,14 @@ public class FindElement {
                 }
             }
             System.out.println(value + " element of array = " + element);
+            return element;
+        } catch (IllegalArgumentException value) {
+            System.out.println("[Error:] incorrect variable; correct values are MIN or MAX");
+            return 0;
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            System.out.println("[Error]: Array is empty");
+            return 0;
         }
-        catch (IllegalArgumentException value){
-            System.out.println("[Error: incorrect variable]; correct values are MIN or MAX");
-            return ((int) Double.NaN);
-
-        }
-        return element;
     }
 
 }

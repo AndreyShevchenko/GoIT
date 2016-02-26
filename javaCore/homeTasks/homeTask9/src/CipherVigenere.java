@@ -2,7 +2,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-public class CipherVigenere implements Serializable{
+public class CipherVigenere implements Serializable {
     private StringBuilder originalText;
     private StringBuilder wordKey;
     private Set<Character> smallLetters;
@@ -16,10 +16,10 @@ public class CipherVigenere implements Serializable{
         bigLetters = new HashSet<>();
         for (int i = 65; i < 123; i++) {
             if (i < 91) {
-                bigLetters.add((char)i);
+                bigLetters.add((char) i);
             }
             if (i > 96) {
-                smallLetters.add((char)i);
+                smallLetters.add((char) i);
             }
         }
         getKey();
@@ -40,7 +40,15 @@ public class CipherVigenere implements Serializable{
         }
     }
 
-    public String encript() {
+    private boolean isWordKeyMissing() {
+        if (wordKey.length() == 0) {
+            System.out.println("[Error:] missing word-key, encryption impossible");
+        }
+        return wordKey.length() == 0;
+    }
+
+    public String encrypt() {
+        if (isWordKeyMissing()) return originalText.toString();
         int temp;
         int flag;
         for (int i = 0; i < originalText.length(); i++) {
@@ -58,17 +66,18 @@ public class CipherVigenere implements Serializable{
                     temp -= 26;
                 }
                 originalText.deleteCharAt(i);
-                originalText.insert(i, (char)temp);
+                originalText.insert(i, (char) temp);
             }
         }
         return originalText.toString();
     }
 
-    public String decript() {
-       for (int i = 0; i < keyToAscii.length; i++) {
-           keyToAscii[i] = (byte)(26 - keyToAscii[i]);
-       }
-        encript();
+    public String decrypt() {
+        if (isWordKeyMissing()) return originalText.toString();
+        for (int i = 0; i < keyToAscii.length; i++) {
+            keyToAscii[i] = (byte) (26 - keyToAscii[i]);
+        }
+        encrypt();
         return originalText.toString();
     }
 
