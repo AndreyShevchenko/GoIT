@@ -40,9 +40,9 @@ public class MatrixCalculator {
         return resultMatrix;
     }
 
-    private double findMinor(double[][] someArray) {
-        return (someArray[0][0]*someArray[1][1] - someArray[0][1]*someArray[1][0]);
-    }
+    /*private double findMinor(double[][] someArray) {
+        return (someArray[0][0] * someArray[1][1] - someArray[0][1] * someArray[1][0]);
+    }*/
 
 
     public void printMatrix() {

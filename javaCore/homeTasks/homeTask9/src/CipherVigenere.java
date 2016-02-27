@@ -10,8 +10,16 @@ public class CipherVigenere implements Serializable {
     private byte[] keyToAscii;
 
     public void setData(String originalText, String wordKey) {
-        this.originalText = new StringBuilder(originalText);
-        this.wordKey = new StringBuilder(wordKey);
+        if (originalText == null) {
+            this.originalText = null;
+        } else {
+            this.originalText = new StringBuilder(originalText);
+        }
+        if (wordKey == null) {
+            this.wordKey = new StringBuilder();
+        } else {
+            this.wordKey = new StringBuilder(wordKey);
+        }
         smallLetters = new HashSet<>();
         bigLetters = new HashSet<>();
         for (int i = 65; i < 123; i++) {
@@ -48,6 +56,7 @@ public class CipherVigenere implements Serializable {
     }
 
     public String encrypt() {
+        if (originalText == null) return null;
         if (isWordKeyMissing()) return originalText.toString();
         int temp;
         int flag;
@@ -73,6 +82,7 @@ public class CipherVigenere implements Serializable {
     }
 
     public String decrypt() {
+        if (originalText == null) return null;
         if (isWordKeyMissing()) return originalText.toString();
         for (int i = 0; i < keyToAscii.length; i++) {
             keyToAscii[i] = (byte) (26 - keyToAscii[i]);
