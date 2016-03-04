@@ -1,29 +1,50 @@
 import java.io.*;
+import java.util.ArrayList;
 
 public class ReadWriteFile {
 
-    public void write(final String filename, final String someText, final String key) {
+    public boolean write(final String filename, final boolean isWriteToEnd, final String someText, final String key) {
         CipherVigenere cipher = new CipherVigenere();
-        cipher.setData(someText, key);
-        cipher.encript();
-        try(ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
+        cipher.encrypt(someText, key, true);
+        ByteArrayOutputStream byteArrayStream = new ByteArrayOutputStream();
+        try (ObjectOutputStream out = new ObjectOutputStream(byteArrayStream)) {
             out.writeObject(cipher);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    public void read(final String filename) {
-        try(ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
-            CipherVigenere cipher = (CipherVigenere) in.readObject();
-            System.out.println(cipher.decript());
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
+            try (FileOutputStream file = new FileOutputStream(filename, isWriteToEnd)) {
+                file.write(byteArrayStream.size());
+                file.write(byteArrayStream.toByteArray());
+            }
+            return true;
+        } catch (FileNotFoundException ex) {
+            System.out.println("[Error:] Syntax error in the file name");
+        } catch (NullPointerException ex) {
+            System.out.println("[Error:] Missing file name; current value is null");
+        }  catch (IOException e) {
             e.printStackTrace();
         }
+        return false;
     }
 
+    public ArrayList<String> read(final String filename) {
+        ArrayList<String> result = new ArrayList<>();
+        try (FileInputStream file = new FileInputStream(filename)) {
+            {
+                while (file.available() > 0) {
+                    int size = file.read();
+                    byte[] byteArrayStream = new byte[size];
+                    file.read(byteArrayStream);
+                    ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(byteArrayStream));
+                    CipherVigenere cipher = (CipherVigenere) in.readObject();
+                    result.add(cipher.decrypt(cipher.getEncodedText(), cipher.getWordKey()));
+                }
+                return result;
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("[Error:] Syntax error in the file name");
+        } catch (NullPointerException ex) {
+            System.out.println("[Error:] Missing file name; current value is null");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 }

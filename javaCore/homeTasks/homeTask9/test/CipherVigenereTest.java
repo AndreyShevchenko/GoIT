@@ -13,17 +13,15 @@ public class CipherVigenereTest {
     @Parameters
     public void testCipherVigenere(String original, String key, String result) throws Exception {
         CipherVigenere test = new CipherVigenere();
-        test.setData(original, key);
-        Assert.assertEquals(0, result.compareTo(test.encrypt()));
-        Assert.assertEquals(0, original.compareTo(test.decrypt()));
+        Assert.assertEquals(0, result.compareTo(test.encrypt(original, key, true)));
+        Assert.assertEquals(0, original.compareTo(test.decrypt(result, key)));
     }
 
     @Test
     public void testCipherVigenereForNull() throws Exception {
         CipherVigenere test = new CipherVigenere();
-        test.setData(null, null);
-        Assert.assertNull(test.encrypt());
-        Assert.assertNull(test.decrypt());
+        Assert.assertNull(test.encrypt(null, null, true));
+        Assert.assertNull(test.decrypt(null, null));
     }
 
     public Object[] parametersForTestCipherVigenere() {

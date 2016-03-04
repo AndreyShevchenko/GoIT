@@ -3,23 +3,20 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class CipherVigenere implements Serializable {
-    private StringBuilder originalText;
-    private StringBuilder wordKey;
-    private Set<Character> smallLetters;
-    private Set<Character> bigLetters;
-    private byte[] keyToAscii;
+    transient private Set<Character> smallLetters;
+    transient private Set<Character> bigLetters;
+    private String wordKey;
+    private String encodedText;
 
-    public void setData(String originalText, String wordKey) {
-        if (originalText == null) {
-            this.originalText = null;
-        } else {
-            this.originalText = new StringBuilder(originalText);
-        }
-        if (wordKey == null) {
-            this.wordKey = new StringBuilder();
-        } else {
-            this.wordKey = new StringBuilder(wordKey);
-        }
+    public String getWordKey() {
+        return wordKey;
+    }
+
+    public String getEncodedText() {
+        return encodedText;
+    }
+
+    private void getSetOfLetters() {
         smallLetters = new HashSet<>();
         bigLetters = new HashSet<>();
         for (int i = 65; i < 123; i++) {
@@ -30,65 +27,70 @@ public class CipherVigenere implements Serializable {
                 smallLetters.add((char) i);
             }
         }
-        getKey();
     }
 
-    // метод, который возвращает массив значений сдвига для шифрования текста
-    // в отличии от метода Цезаря, этот шифр невозможно разгадать не зная слово-ключ
-    private void getKey() {
+    private byte[] getKey(boolean isEncrypt) {
+        getSetOfLetters();
+        StringBuilder wordKey = new StringBuilder(this.wordKey);
         for (int i = 0; i < wordKey.length(); i++) {
             if (!(smallLetters.contains(wordKey.charAt(i)) || bigLetters.contains(wordKey.charAt(i)))) {
                 wordKey.deleteCharAt(i);
                 i--;
             }
         }
-        keyToAscii = wordKey.toString().toUpperCase().getBytes();
+        byte[] keyToAscii = wordKey.toString().toUpperCase().getBytes();
         for (int i = 0; i < keyToAscii.length; i++) {
-            keyToAscii[i] -= 65;
+            if (isEncrypt) {
+                keyToAscii[i] -= 65;
+            } else {
+                keyToAscii[i] = (byte) (91 - keyToAscii[i]);
+            }
         }
+        return keyToAscii;
     }
 
     private boolean isWordKeyMissing() {
-        if (wordKey.length() == 0) {
+        try {
+            return (this.wordKey.isEmpty());
+        } catch (NullPointerException ex) {
             System.out.println("[Error:] missing word-key, encryption impossible");
+            return true;
         }
-        return wordKey.length() == 0;
     }
 
-    public String encrypt() {
+    public String encrypt(String originalText, String wordKey, boolean isEncrypt) {
+        this.wordKey = wordKey;
         if (originalText == null) return null;
-        if (isWordKeyMissing()) return originalText.toString();
+        if (isWordKeyMissing()) return originalText;
+        StringBuilder text = new StringBuilder(originalText);
+        byte[] keyToAscii = getKey(isEncrypt);
         int temp;
         int flag;
-        for (int i = 0; i < originalText.length(); i++) {
+        for (int i = 0; i < text.length(); i++) {
             flag = 0;
-            if (smallLetters.contains(originalText.charAt(i))) {
+            if (smallLetters.contains(text.charAt(i))) {
                 flag = 122;
             }
-            if (bigLetters.contains(originalText.charAt(i))) {
+            if (bigLetters.contains(text.charAt(i))) {
                 flag = 90;
             }
             if (flag > 0) {
-                temp = originalText.codePointAt(i);
-                temp += keyToAscii[i % wordKey.length()];
+                temp = text.codePointAt(i);
+                temp += keyToAscii[i % keyToAscii.length];
                 if (temp > flag) {
                     temp -= 26;
                 }
-                originalText.deleteCharAt(i);
-                originalText.insert(i, (char) temp);
+                text.deleteCharAt(i);
+                text.insert(i, (char) temp);
             }
         }
-        return originalText.toString();
+        return this.encodedText = text.toString();
     }
 
-    public String decrypt() {
-        if (originalText == null) return null;
-        if (isWordKeyMissing()) return originalText.toString();
-        for (int i = 0; i < keyToAscii.length; i++) {
-            keyToAscii[i] = (byte) (26 - keyToAscii[i]);
-        }
-        encrypt();
-        return originalText.toString();
+    public String decrypt(String cryptText, String wordKey) {
+        this.wordKey = wordKey;
+        if (cryptText == null) return null;
+        if (isWordKeyMissing()) return cryptText;
+        return encrypt(cryptText, wordKey, false);
     }
-
 }
