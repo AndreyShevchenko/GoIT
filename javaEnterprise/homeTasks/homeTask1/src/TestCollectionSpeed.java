@@ -4,6 +4,7 @@ import java.util.*;
 public class TestCollectionSpeed {
     private int numberOfMeasurements;
     private Random random = new Random();
+    private int randomNumber;
     private long time;
 
     public TestCollectionSpeed(int numberOfMeasurements) {
@@ -21,58 +22,45 @@ public class TestCollectionSpeed {
         someCollection.clear();
         time = System.currentTimeMillis();
         for (int i = 0; i < size; i++) {
-            someCollection.add(random.nextInt() % size);
+            someCollection.add(Math.abs(random.nextInt() % size));
         }
         return System.currentTimeMillis() - time;
     }
 
-    private long getAverageTimeForListAdd(List<Integer> someCollection, int size) {
-        int index = Math.abs(random.nextInt() % size);
+    private long getAverageTimeForListAdd(List<Integer> someCollection) {
         time = System.nanoTime();
-        someCollection.add(index, index);
+        someCollection.add(randomNumber, randomNumber);
         return System.nanoTime() - time;
     }
 
-    private long getAverageTimeForSetAdd(Set<Integer> someCollection, int size) {
-        int value = random.nextInt() % size;
+    private long getAverageTimeForSetAdd(Set<Integer> someCollection) {
         time = System.nanoTime();
-        someCollection.add(value);
+        someCollection.add(randomNumber);
         return System.nanoTime() - time;
     }
 
-    private long getAverageTimeForListGet(List<Integer> someCollection, int size) {
-        int index = Math.abs(random.nextInt() % size);
+    private long getAverageTimeForListGet(List<Integer> someCollection) {
         time = System.nanoTime();
-        someCollection.get(index);
+        someCollection.get(randomNumber);
         return System.nanoTime() - time;
     }
 
-    private long getAverageTimeForListRemove(List<Integer> someCollection, int size) {
-        int index = Math.abs(random.nextInt() % size);
+    private long getAverageTimeForRemove(Collection<Integer> someCollection) {
         time = System.nanoTime();
-        someCollection.remove(index);
+        someCollection.remove(randomNumber);
         return System.nanoTime() - time;
     }
 
-    private long getAverageTimeForSetRemove(Set<Integer> someCollection, int size) {
-        int value = random.nextInt() % size;
+    private long getAverageTimeForContains(Collection<Integer> someCollection) {
         time = System.nanoTime();
-        someCollection.remove(value);
+        someCollection.contains(randomNumber);
         return System.nanoTime() - time;
     }
 
-    private long getAverageTimeForContains(Collection<Integer> someCollection, int size) {
-        int value = random.nextInt() % size;
-        time = System.nanoTime();
-        someCollection.contains(value);
-        return System.nanoTime() - time;
-    }
-
-    private long getAverageTimeForListIteratorAdd(List<Integer> someCollection, int size) {
+    private long getAverageTimeForListIteratorAdd(List<Integer> someCollection) {
         ListIterator<Integer> iterator = someCollection.listIterator();
-        int number = Math.abs(random.nextInt() % size);
         time = System.nanoTime();
-        iterator.add(number);
+        iterator.add(randomNumber);
         return System.nanoTime() - time;
     }
 
@@ -100,7 +88,7 @@ public class TestCollectionSpeed {
     }
 
     private void printFields(Integer size, String filename) {
-        String[] fieldNames = {"size = ", "add", "get", "remove", "contains", "populate", "iterator.add", "iterator.remove"};
+        final String[] fieldNames = {"size = ", "add", "get", "remove", "contains", "populate", "iterator.add", "iterator.remove"};
         try (FileWriter file = new FileWriter(filename, true)) {
             fieldNames[0] = fieldNames[0].concat(size.toString());
             for (String fieldName : fieldNames) {
@@ -151,21 +139,22 @@ public class TestCollectionSpeed {
         List<Integer>[] lists = new List[2];
         Set<Integer>[] sets = new Set[2];
         initCollections(lists, sets);
-        for (int i = 0; i < 3; i++) {
-            printFields(sizes[i], filename);
-            for (int j = 0; j < 2; j++) {
+        for (Integer size : sizes) {
+            printFields(size, filename);
+            for (int j = 0; j < lists.length; j++) {
                 for (int k = 0; k < numberOfMeasurements; k++) {
-                    results[j][4] += populateCollection(lists[j], sizes[i]);
-                    results[j][0] += getAverageTimeForListAdd(lists[j], sizes[i]);
-                    results[j][1] += getAverageTimeForListGet(lists[j], sizes[i]);
-                    results[j][2] += getAverageTimeForListRemove(lists[j], sizes[i]);
-                    results[j][3] += getAverageTimeForContains(lists[j], sizes[i]);
-                    results[j][5] += getAverageTimeForListIteratorAdd(lists[j], sizes[i]);
+                    randomNumber = Math.abs(random.nextInt() % size);
+                    results[j][4] += populateCollection(lists[j], size);
+                    results[j][0] += getAverageTimeForListAdd(lists[j]);
+                    results[j][1] += getAverageTimeForListGet(lists[j]);
+                    results[j][2] += getAverageTimeForRemove(lists[j]);
+                    results[j][3] += getAverageTimeForContains(lists[j]);
+                    results[j][5] += getAverageTimeForListIteratorAdd(lists[j]);
                     results[j][6] += getAverageTimeForListIteratorRemove(lists[j]);
-                    results[j + 2][4] += populateCollection(sets[j], sizes[i]);
-                    results[j + 2][0] += getAverageTimeForSetAdd(sets[j], sizes[i]);
-                    results[j + 2][2] += getAverageTimeForSetRemove(sets[j], sizes[i]);
-                    results[j + 2][3] += getAverageTimeForContains(sets[j], sizes[i]);
+                    results[j + 2][4] += populateCollection(sets[j], size);
+                    results[j + 2][0] += getAverageTimeForSetAdd(sets[j]);
+                    results[j + 2][2] += getAverageTimeForRemove(sets[j]);
+                    results[j + 2][3] += getAverageTimeForContains(sets[j]);
                 }
             }
             printResults(results, filename);
